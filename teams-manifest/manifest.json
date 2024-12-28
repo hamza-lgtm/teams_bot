@@ -1,0 +1,39 @@
+{
+    "$schema":  "https://developer.microsoft.com/en-us/json-schemas/teams/v1.11/MicrosoftTeams.schema.json",
+    "manifestVersion":  "1.11",
+    "version":  "1.0.0",
+    "id":  "your_bot_id",
+    "packageName":  "com.notification.teamsbot",
+    "developer":  {
+                      "name":  "Your Company",
+                      "websiteUrl":  "https://your-company.com",
+                      "privacyUrl":  "https://your-company.com/privacy",
+                      "termsOfUseUrl":  "https://your-company.com/terms"
+                  },
+    "name":  {
+                 "short":  "Notification Bot",
+                 "full":  "Teams Notification Bot"
+             },
+    "description":  {
+                        "short":  "Receive notifications in Teams",
+                        "full":  "A bot that allows you to receive notifications directly in Microsoft Teams."
+                    },
+    "icons":  {
+                  "outline":  "outline.png",
+                  "color":  "color.png"
+              },
+    "accentColor":  "#FFFFFF",
+    "bots":  [
+                 {
+                     "botId":  "{{BOT_ID}}",
+                     "scopes":  [
+                                    "personal"
+                                ],
+                     "supportsFiles":  false,
+                     "isNotificationOnly":  false
+                 }
+             ],
+    "permissions":  [
+                        "messageTeamMembers"
+                    ]
+}
