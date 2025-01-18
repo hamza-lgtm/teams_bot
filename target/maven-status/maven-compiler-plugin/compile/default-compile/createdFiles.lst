@@ -1,0 +1,9 @@
+com\teamsbot\config\WebConfig.class
+com\teamsbot\TeamsNotificationBotApplication.class
+com\teamsbot\model\TeamsUser.class
+com\teamsbot\controller\NotificationController.class
+com\teamsbot\repository\TeamsUserRepository.class
+com\teamsbot\controller\NotificationController$NotificationRequest.class
+com\teamsbot\bot\NotificationBot.class
+com\teamsbot\service\TeamsMessageService.class
+com\teamsbot\config\BotConfig.class

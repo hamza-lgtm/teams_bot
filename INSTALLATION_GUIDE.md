@@ -1,128 +1,164 @@
 # Teams Notification Bot - Installation Guide
 
-## For Bot Administrators (You)
+This guide provides detailed steps to set up and configure the Teams Notification Bot in your environment.
 
-### 1. Register the Bot in Azure
+## System Requirements
+
+- Java Development Kit (JDK) 11 or higher
+- Maven 3.6 or higher
+- Microsoft Azure Account
+- Microsoft Teams Admin Access
+- ngrok (for local development)
+
+## Step-by-Step Installation
+
+### 1. Clone and Build the Project
+
+```bash
+# Clone the repository
+git clone [your-repository-url]
+
+# Navigate to project directory
+cd teams-notification-bot-java
+
+# Build the project
+mvn clean install
+```
+
+### 2. Azure Bot Registration
+
 1. Go to [Azure Portal](https://portal.azure.com)
-2. Create a new "Azure Bot" resource:
-   - Click "Create a resource"
-   - Search for "Azure Bot"
-   - Click "Create"
-   - Fill in the required information:
-     - Bot handle (name)
-     - Subscription
-     - Resource group
-     - Location
-3. After creation, note down:
+2. Click on "Create a resource"
+3. Search for "Azure Bot" and select it
+4. Fill in the required information:
+   - Bot handle: Choose a unique name
+   - Subscription: Select your subscription
+   - Resource group: Create new or use existing
+   - Pricing tier: Choose appropriate tier (F0 is free)
+   - Microsoft App ID: Create new
+5. Click "Review + Create" and then "Create"
+6. Once created, go to the bot resource
+7. Under "Settings", find and note down:
    - Microsoft App ID
-   - Microsoft App Password (client secret)
+   - Generate and note down the Microsoft App Password
 
-### 2. Configure the Bot
-1. Update `application.properties` with your credentials:
-   ```properties
-   MicrosoftAppId=your_app_id_here
-   MicrosoftAppPassword=your_app_password_here
-   ```
+### 3. Configure Application Properties
 
-### 3. Deploy the Bot
-1. Build the application:
-   ```bash
-   mvn clean package
-   ```
-2. Deploy to a server with HTTPS support (required by Microsoft Teams)
-3. Make sure your bot endpoint is accessible at: `https://your-domain.com/api/messages`
+1. Create `application.properties` file in `src/main/resources/` if it doesn't exist
+2. Add the following configurations:
 
-### 4. Create Teams App Package
-1. Update the manifest.json in teams-manifest folder:
-   ```json
-   {
-     "id": "your_bot_id",
-     "packageName": "com.notification.teamsbot",
-     "developer": {
-       "name": "Your Company",
-       "websiteUrl": "https://your-company.com",
-       "privacyUrl": "https://your-company.com/privacy",
-       "termsOfUseUrl": "https://your-company.com/terms"
-     }
-   }
+```properties
+server.port=3978
+MicrosoftAppId=your-app-id
+MicrosoftAppPassword=your-app-password
+
+# Database Configuration (if using local database)
+spring.datasource.url=jdbc:h2:file:./data/teamsbot
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=password
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.jpa.hibernate.ddl-auto=update
+```
+
+### 4. Set Up Local Development Environment
+
+1. Download and install ngrok from [https://ngrok.com/download](https://ngrok.com/download)
+2. Start ngrok to create a tunnel to your local server:
+
+```bash
+ngrok http 3978
+```
+
+3. Copy the HTTPS URL provided by ngrok (e.g., https://xxxx.ngrok.io)
+
+### 5. Update Bot Endpoint in Azure
+
+1. Go back to your Bot resource in Azure Portal
+2. Under "Configuration", update the "Messaging endpoint":
    ```
-2. Create icons:
-   - color.png (192x192)
-   - outline.png (32x32)
-3. Zip these files together:
+   https://xxxx.ngrok.io/api/messages
+   ```
+3. Save the changes
+
+### 6. Prepare Teams App Package
+
+1. Navigate to `teams-manifest` directory
+2. Update `manifest.json`:
+   - Replace the `botId` with your Microsoft App ID
+   - Update `developer` information
+   - Modify `validDomains` if needed
+3. Ensure you have the required icons:
+   - `outline.jpeg`
+   - `color.jpeg`
+4. Create a ZIP file containing:
    - manifest.json
-   - color.png
-   - outline.png
+   - outline.jpeg
+   - color.jpeg
 
-## For Users (Your Customers)
+### 7. Install Bot in Teams
 
-### 1. Install the Bot
-1. Receive the Teams app package (ZIP file) from the administrator
-2. In Microsoft Teams:
-   - Click the "Apps" icon in the left sidebar
-   - Click "Upload a custom app" at the bottom left
-   - Select "Upload for me or my teams"
-   - Choose the ZIP file you received
-   - Click "Add"
+1. Open Microsoft Teams Admin Center
+2. Navigate to "Teams apps" → "Manage apps"
+3. Click "Upload" and select your ZIP package
+4. Follow the prompts to complete installation
 
-### 2. Register with the Bot
-1. After installation:
-   - Find the bot in your Teams app list
-   - Start a chat with the bot
-   - Type "register" in the chat
-   - The bot will confirm your registration
+### 8. Run the Application
 
-### 3. Receive Notifications
-- Once registered, you'll automatically receive notifications when they're sent
-- Notifications will appear as chat messages from the bot
-- You can view all past notifications in your chat history with the bot
+```bash
+# Using Maven
+mvn spring-boot:run
 
-## Testing the Installation
+# Or using Java
+java -jar target/teams-notification-bot-1.0-SNAPSHOT.jar
+```
 
-1. After installation, users can verify the setup:
-   - Start a chat with the bot
-   - Type "register"
-   - Should receive a confirmation message
+## Verify Installation
 
-2. Administrators can test sending notifications:
-   ```bash
-   curl -X POST https://your-domain.com/api/notifications/send \
-   -H "Content-Type: application/json" \
-   -d '{
-       "hostEmail": "user@company.com",
-       "message": "Test notification message"
-   }'
-   ```
+1. Open Microsoft Teams
+2. Find the bot in your installed apps
+3. Send a test message to the bot
+4. Test the notification API:
+
+```bash
+curl -X POST http://localhost:3978/api/notifications/send \
+  -H "Content-Type: application/json" \
+  -d '{
+    "hostEmail": "user@example.com",
+    "message": "Test notification"
+  }'
+```
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. Bot Not Responding
-   - Verify the bot service is running
-   - Check application.properties configuration
-   - Ensure the endpoint is accessible
+1. **Bot not responding**
+   - Verify ngrok is running and the endpoint is updated in Azure
+   - Check application logs for errors
+   - Verify Microsoft App ID and Password are correct
 
-2. Installation Failed
-   - Verify the manifest.json is correctly formatted
-   - Ensure all required URLs are HTTPS
-   - Check if icons meet size requirements
+2. **API calls failing**
+   - Ensure the application is running
+   - Check if the port is correct and not blocked
+   - Verify the request format
 
-3. Registration Failed
-   - Ensure the bot service is running
-   - Check network connectivity
-   - Verify user has permissions to install apps
+3. **Teams installation issues**
+   - Verify manifest.json format
+   - Check if all required permissions are included
+   - Ensure bot ID matches the Microsoft App ID
 
-### Support
+### Getting Help
 
-For technical support:
+If you encounter any issues not covered in this guide:
 1. Check the application logs
-2. Contact the bot administrator
-3. Verify Teams app installation permissions with your IT department
+2. Review Azure Bot Service documentation
+3. Contact your system administrator or raise an issue in the project repository
 
-## Security Notes
+## Security Considerations
 
-1. The bot only sends messages to registered users
-2. All communication is encrypted via HTTPS
-3. User data is stored securely
-4. Bot access is limited to approved organizations
+- Keep your Microsoft App ID and Password secure
+- Don't commit sensitive credentials to source control
+- Use environment variables or secure configuration management
+- Regularly update dependencies for security patches
+- Monitor bot usage and implement rate limiting if needed

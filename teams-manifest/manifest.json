@@ -1,39 +1,74 @@
 {
-    "$schema":  "https://developer.microsoft.com/en-us/json-schemas/teams/v1.11/MicrosoftTeams.schema.json",
-    "manifestVersion":  "1.11",
-    "version":  "1.0.0",
-    "id":  "your_bot_id",
-    "packageName":  "com.notification.teamsbot",
-    "developer":  {
-                      "name":  "Your Company",
-                      "websiteUrl":  "https://your-company.com",
-                      "privacyUrl":  "https://your-company.com/privacy",
-                      "termsOfUseUrl":  "https://your-company.com/terms"
-                  },
-    "name":  {
-                 "short":  "Notification Bot",
-                 "full":  "Teams Notification Bot"
-             },
-    "description":  {
-                        "short":  "Receive notifications in Teams",
-                        "full":  "A bot that allows you to receive notifications directly in Microsoft Teams."
-                    },
-    "icons":  {
-                  "outline":  "outline.png",
-                  "color":  "color.png"
-              },
-    "accentColor":  "#FFFFFF",
-    "bots":  [
-                 {
-                     "botId":  "{{BOT_ID}}",
-                     "scopes":  [
-                                    "personal"
-                                ],
-                     "supportsFiles":  false,
-                     "isNotificationOnly":  false
-                 }
-             ],
-    "permissions":  [
-                        "messageTeamMembers"
+    "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.14/MicrosoftTeams.schema.json",
+    "manifestVersion": "1.14",
+    "version": "1.0.0",
+    "id": "27103961-03c7-4985-8491-8fb74a41bc8c",
+    "packageName": "co.smartlobby.bot.notification",
+    "developer": {
+        "name": "Abobos Ltd",
+        "websiteUrl": "https://smartlobby.co",
+        "privacyUrl": "https://smartlobby.co/privacy",
+        "termsOfUseUrl": "https://smartlobby.co/terms"
+    },
+    "icons": {
+        "outline": "outline.png",
+        "color": "color.png"
+    },
+    "name": {
+        "short": "SmartLobby Notifications",
+        "full": "SmartLobby Teams Notification Bot"
+    },
+    "description": {
+        "short": "Send notifications to Teams users",
+        "full": "A bot that allows sending real-time notifications to Microsoft Teams users."
+    },
+    "accentColor": "#FFFFFF",
+    "configurableTabs": [],
+    "staticTabs": [],
+    "bots": [
+        {
+            "botId": "27103961-03c7-4985-8491-8fb74a41bc8c",
+            "needsChannelSelector": false,
+            "isNotificationOnly": false,
+            "supportsFiles": false,
+            "supportsCalling": false,
+            "supportsVideo": false,
+            "scopes": [
+                "personal",
+                "team"
+            ],
+            "commandLists": [
+                {
+                    "scopes": [
+                        "personal",
+                        "team"
+                    ],
+                    "commands": [
+                        {
+                            "title": "Help",
+                            "description": "Shows help information"
+                        }
                     ]
+                }
+            ]
+        }
+    ],
+    "connectors": [],
+    "composeExtensions": [],
+    "permissions": [
+        "identity",
+        "messageTeamMembers"
+    ],
+    "validDomains": [
+        "*.ngrok.io",
+        "*.ngrok-free.app",
+        "token.botframework.com",
+        "smartlobby.co",
+        "*.smartlobby.co"
+    ],
+    "webApplicationInfo": {
+        "id": "27103961-03c7-4985-8491-8fb74a41bc8c",
+        "resource": "api://botid-27103961-03c7-4985-8491-8fb74a41bc8c"
+    }
+    
 }

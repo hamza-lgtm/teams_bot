@@ -1,76 +1,85 @@
 # Teams Notification Bot
 
-A Java-based Microsoft Teams bot that allows you to send notifications to your customers through Microsoft Teams.
+A Microsoft Teams bot that enables sending notifications to users through a REST API.
 
-## How It Works
+## Prerequisites
 
-1. **Bot Installation**:
-   - Your customers install the bot in their Microsoft Teams account
-   - They chat with the bot and type "register" to start receiving notifications
-   - The bot stores their Teams user ID for future notifications
-
-2. **Sending Notifications**:
-   - You can send notifications to registered customers via the API
-   - Messages are delivered instantly to their Teams account
+- Java 11 or higher
+- Maven
+- Microsoft Azure account
+- Microsoft Teams account with admin privileges
+- ngrok (for local development)
 
 ## Setup Instructions
 
-1. Register your bot in the Azure Portal:
-   - Go to [Azure Portal](https://portal.azure.com)
-   - Create a new "Azure Bot" resource
-   - Note down the `MicrosoftAppId` and `MicrosoftAppPassword`
+### 1. Azure Bot Registration
 
-2. Configure the application:
-   - Open `src/main/resources/application.properties`
-   - Replace `your_app_id_here` with your Bot's App ID
-   - Replace `your_app_password_here` with your Bot's password
+1. Go to [Azure Portal](https://portal.azure.com)
+2. Create a new Bot Registration
+3. Note down the `MicrosoftAppId` and `MicrosoftAppPassword`
+4. Update these values in `src/main/resources/application.properties`
 
-3. Build the project:
-   ```bash
-   mvn clean install
-   ```
-
-4. Run the application:
-   ```bash
-   mvn spring-boot:run
-   ```
-
-## Creating the Teams App Package
-
-1. Update the manifest:
-   - Go to `teams-manifest/manifest.json`
-   - Replace `{{BOT_ID}}` with your Bot's App ID
-   - Update company information and URLs
-   - Add your bot icons (outline.png and color.png)
-
-2. Create the app package:
-   - Zip the manifest.json and icon files
-   - The zip file is your Teams app package
-
-## Customer Installation
-
-1. Share the Teams app package with your customers
-2. Customers install the app in their Teams environment
-3. Customers chat with the bot and type "register"
-4. The bot confirms registration
-
-## Sending Notifications
-
-Send a notification by making a POST request to the endpoint:
+### 2. Build and Run the Bot
 
 ```bash
-curl -X POST http://your-server:3978/api/notifications/send \
--H "Content-Type: application/json" \
--d '{
-    "hostEmail": "customer@example.com",
-    "message": "Hello Joe, your visitor Jane has just arrived. Please proceed to the reception to collect her. Thank you."
-}'
+# Build the project
+mvn clean package
+
+# Run the application
+java -jar target/teams-notification-bot-1.0-SNAPSHOT.jar
 ```
 
-## Security Notes
+### 3. Expose Local Server (Development)
 
-- Store sensitive information like App ID and Password in secure configuration management
-- Implement proper authentication for the API endpoints
-- Use HTTPS in production
-- Validate all input data
-- Store customer registration data in a proper database (current implementation uses in-memory storage)
+```bash
+# Download and install ngrok
+# Run ngrok to expose your local server
+ngrok http 3978
+```
+
+Note down the HTTPS URL provided by ngrok (e.g., https://xxxx.ngrok.io)
+
+### 4. Update Bot Endpoint
+
+1. Go to your Bot Registration in Azure Portal
+2. Update the messaging endpoint to your ngrok URL:
+   `https://xxxx.ngrok.io/api/messages`
+
+### 5. Install Bot in Teams
+
+1. Package the bot manifest:
+   - Update `manifest.json` with your bot details
+   - Create a ZIP file containing:
+     - manifest.json
+     - outline.png
+     - color.png
+2. Install the bot in Teams:
+   - Go to Teams Admin Center
+   - Upload the custom app (ZIP file)
+   - Grant necessary permissions
+
+## Using the Bot
+
+### Send Notification
+
+Send a POST request to `/api/notifications/send`:
+
+```bash
+curl -X POST http://localhost:3978/api/notifications/send \
+  -H "Content-Type: application/json" \
+  -d '{
+    "hostEmail": "user@example.com",
+    "message": "Hello, your visitor has arrived!"
+  }'
+```
+
+## Features
+
+- Proactive messaging to Teams users
+- User registration on bot installation
+- REST API for sending notifications
+- Persistent storage of user information
+
+## Support
+
+For support or questions, please contact your system administrator.
